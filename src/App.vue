@@ -3,6 +3,9 @@
     <div v-if="!mobile" class="app flex flex-column">
       <Navigation />
       <div class="app-content flex flex-column">
+        <transition name="invoice">
+          <InvoiceModal v-if="invoiceModal" />
+        </transition>      
         <router-view />
       </div>
     </div>
@@ -14,10 +17,13 @@
 </template>
 <script>
 import Navigation from './components/Navigation.vue';
+import InvoiceModal from './components/InvoiceModal.vue';
+import { mapState } from 'vuex';
   export default{
     components: {
-      Navigation,
-    },
+    Navigation,
+    InvoiceModal
+},
     data() {
       return {
         mobile: null
@@ -37,6 +43,9 @@ import Navigation from './components/Navigation.vue';
         this.mobile = false;
       }
     },
+    computed: {
+      ...mapState(['invoiceModal'])
+    }
   }
 </script>
 
@@ -53,13 +62,34 @@ import Navigation from './components/Navigation.vue';
 .app {
   background-color: #141625;
   min-height: 100vh;
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  /* Track */
+  &::-webkit-scrollbar-track {
+    border-radius: 8px;
+    background: transparent; 
+  }
+  
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background: #7c5dfa;
+  }
+
+  /* Handle on hover */
+  &::-webkit-scrollbar-thumb:hover {
+    background: #6a49ef; 
+  }
   @media(min-width: 900px){
     flex-direction: row !important;
   }
 
   &-content{
    padding: 0 20px;
-   flex:1;
+   flex: 1;
    position: relative; 
   }
 }
@@ -74,6 +104,17 @@ import Navigation from './components/Navigation.vue';
   p {
     margin-top: 1.6rem;
   }
+}
+
+//animated invoice modal
+.invoice-enter-active,
+.invoice-leave-active {
+  transition: 0.8s ease all;
+}
+
+.invoice-enter-from,
+.invoice-leave-to {
+  transform: translateX(-700px);
 }
 
 button,
@@ -173,4 +214,7 @@ button,
   color: #dfe3fa;
   background-color: rgba(223, 227, 250, 0.1);
 }
+
+
+
 </style>
