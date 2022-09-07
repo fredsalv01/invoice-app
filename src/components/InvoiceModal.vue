@@ -5,6 +5,7 @@
     class="invoice-wrap flex flex-column"
   >
     <form @submit.prevent="submitForm" class="invoice-content">
+      <Loading v-show="loading" />
       <h1>New Invoice</h1>
       <!-- Bill From -->
       <div class="bill-from flex flex-column">
@@ -151,15 +152,15 @@
       <!-- Save/Exit -->
       <div class="save flex">
         <div class="left">
-          <button @click="closeInvoice" class="red">
+          <button type="button" @click="closeInvoice" class="red">
             Cancel
           </button>
         </div>
         <div class="right">
-          <button @click="saveDraft" class="dark-purple">
+          <button type="submit" @click="saveDraft" class="dark-purple">
             Save Draft
           </button>
-          <button @click="publishInvoice" class="purple">
+          <button type="submit" @click="publishInvoice" class="purple">
             Create Invoice
           </button>
         </div>
@@ -168,12 +169,19 @@
   </div>
 </template>
 <script>
+import { collection, addDoc } from "firebase/firestore";
+import db from '../firebase/firebaseInit';
 import { mapMutations } from 'vuex';
 import {uid} from 'uid';
+import Loading from "./Loading.vue";
 export default {
   name: "invoiceModal",
+  components: {
+    Loading
+  },
   data() {
     return {
+      loading: null,
       dateOptions: {year: 'numeric', month: 'short', day: 'numeric'},
       billerStreetAddress: null,
       billerCity: null,
@@ -219,6 +227,67 @@ export default {
     },
     deleteInvoiceItem(id) {
       this.invoiceItemList = this.invoiceItemList.filter(item => item.id !== id);
+    },
+    callInvoiceTotal(){
+      this.invoiceTotal = 0;
+      this.invoiceItemList.forEach(item => {
+        this.invoiceTotal += item.total;
+      });
+    },
+    publishInvoice() {
+      this.invoicePending = true;
+    },
+    saveDraft () {
+      this.invoiceDraft = true;
+    },
+    async uploadInvoice() {
+      if(this.invoiceItemList.length <= 0) {
+        alert('Please ensure you filled out work items!');
+        return;
+      }
+      this.loading = true;
+
+      this.callInvoiceTotal;
+      try {
+        const docRef = await addDoc(collection(db, "invoices"),
+        {
+          invoiceId: uid(6),
+          billerStreetAddress: this.billerStreetAddress,
+          billerCity: this.billerCity,
+          billerZipCode: this.billerZipCode,
+          billerCountry: this.billerCountry,
+          clientName: this.clientName,
+          clientEmail: this.clientEmail,
+          clientStreetAddress: this.clientStreetAddress,
+          clientCity: this.clientCity,
+          clientZipCode: this.clientZipCode,
+          clientCountry: this.clientCountry,
+          invoiceDateUnix: this.invoiceDateUnix,
+          invoiceDate: this.invoiceDate,
+          paymentTerms: this.paymentTerms,
+          paymentDueDateUnix: this.paymentDueDateUnix,
+          paymentDueDate: this.paymentDueDate,
+          productDescription: this.productDescription,
+          invoicePending: this.invoicePending,
+          invoiceDraft: this.invoiceDraft,
+          invoiceItemList: this.invoiceItemList,
+          invoiceTotal: this.invoiceTotal,
+          invoicePaid: null,
+        })
+
+        this.loading = false;
+        alert('Your invoice has been saved')
+
+        console.log("Document Writter with ID: ", docRef.id)
+      } catch (error) {
+        console.log('Error adding document: ', error);
+      }
+
+      this.TOGGLE_INVOICE();
+
+    },
+    submitForm () {
+      this.uploadInvoice();
     }
   },
   watch: {
