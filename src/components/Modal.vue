@@ -10,8 +10,19 @@
   </div>
 </template>
 <script>
+import { mapMutations } from 'vuex';
 export default {
-  
+  name: 'modal',
+  methods: {
+    ...mapMutations(['TOGGLE_MODAL', 'TOGGLE_INVOICE']),
+    closeModal() {
+      this.TOGGLE_MODAL();
+    },
+    closeInvoice() {
+      this.TOGGLE_MODAL();
+      this.TOGGLE_INVOICE();
+    }
+  },
 }
 </script>
 <style lang="scss" scoped>
@@ -19,7 +30,7 @@ export default {
     z-index: 100;
     position: fixed;
     justify-content: center;
-    background: opacify(#373b5a, 0.5);
+    background-color: rgba(0,0,0, 0.5);
     align-items: center;
     height: 100vh;
     width: 100%;
