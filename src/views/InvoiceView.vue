@@ -175,6 +175,11 @@ export default {
 
       button {
         color: #fff;
+
+        &:hover {
+          opacity: 0.8;
+          box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.5);
+        }
       }
     }
   }
