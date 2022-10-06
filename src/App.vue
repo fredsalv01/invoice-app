@@ -6,7 +6,7 @@
         <Modal v-if="modalActive" />
         <transition name="invoice">
           <InvoiceModal v-if="invoiceModal" />
-        </transition>      
+        </transition>
         <router-view />
       </div>
     </div>
@@ -17,39 +17,41 @@
   </div>
 </template>
 <script>
-import Navigation from './components/Navigation.vue';
-import InvoiceModal from './components/InvoiceModal.vue';
-import Modal from './components/Modal.vue';
-import { mapState } from 'vuex';
-  export default{
-    components: {
+import Navigation from "./components/Navigation.vue";
+import InvoiceModal from "./components/InvoiceModal.vue";
+import Modal from "./components/Modal.vue";
+import { mapState, mapActions } from "vuex";
+export default {
+  components: {
     Navigation,
     InvoiceModal,
-    Modal
-},
-    data() {
-      return {
-        mobile: null
+    Modal,
+  },
+  data() {
+    return {
+      mobile: null,
+    };
+  },
+  created() {
+    this.GET_INVOICES();
+    this.checkScreen();
+    window.addEventListener("resize", this.checkScreen);
+  },
+  methods: {
+    ...mapActions(["GET_INVOICES"]),
+    checkScreen() {
+      const windowWidth = window.innerWidth;
+      if (windowWidth <= 750) {
+        this.mobile = true;
+        return;
       }
+      this.mobile = false;
     },
-    created() {
-      this.checkScreen();
-      window.addEventListener('resize', this.checkScreen);
-    },
-    methods: {
-      checkScreen() {
-        const windowWidth = window.innerWidth;
-        if(windowWidth <= 750){
-          this.mobile = true;
-          return;
-        }
-        this.mobile = false;
-      }
-    },
-    computed: {
-      ...mapState(['invoiceModal', 'modalActive'])
-    }
-  }
+  },
+  computed: {
+    ...mapState(["invoiceModal", "modalActive"]),
+  },
+};
 </script>
 
 <style lang="scss">
@@ -65,7 +67,7 @@ import { mapState } from 'vuex';
 .app {
   background-color: #141625;
   min-height: 100vh;
-  
+
   &::-webkit-scrollbar {
     width: 8px;
   }
@@ -73,9 +75,9 @@ import { mapState } from 'vuex';
   /* Track */
   &::-webkit-scrollbar-track {
     border-radius: 8px;
-    background: transparent; 
+    background: transparent;
   }
-  
+
   /* Handle */
   &::-webkit-scrollbar-thumb {
     border-radius: 8px;
@@ -84,16 +86,16 @@ import { mapState } from 'vuex';
 
   /* Handle on hover */
   &::-webkit-scrollbar-thumb:hover {
-    background: #6a49ef; 
+    background: #6a49ef;
   }
-  @media(min-width: 900px){
+  @media (min-width: 900px) {
     flex-direction: row !important;
   }
 
-  &-content{
-   padding: 0 20px;
-   flex: 1;
-   position: relative; 
+  &-content {
+    padding: 0 20px;
+    flex: 1;
+    position: relative;
   }
 }
 
@@ -217,7 +219,4 @@ button,
   color: #dfe3fa;
   background-color: rgba(223, 227, 250, 0.1);
 }
-
-
-
 </style>

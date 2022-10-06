@@ -1,12 +1,14 @@
-import { createStore } from 'vuex'
-import db from '../firebase/firebaseInit'
-import {collection, getDocs} from 'firebase/firestore'
+/* eslint-disable */
+import { createStore } from "vuex";
+import db from "../firebase/firebaseInit";
+import { collection, getDocs } from "firebase/firestore";
 
 export default createStore({
   state: {
     invoiceData: [],
     invoiceModal: null,
-    modalActive: null
+    modalActive: null,
+    invoicesLoaded: null,
   },
   mutations: {
     TOGGLE_INVOICE(state) {
@@ -14,16 +16,24 @@ export default createStore({
     },
     TOGGLE_MODAL(state) {
       state.modalActive = !state.modalActive;
-    }
+    },
+    SET_INVOICE_DATA(state, payload) {
+      state.invoiceData.push(payload);
+      console.log(state.invoiceData);
+    },
+    INVOICES_LOADED(state) {
+      state.invoicesLoaded = true;
+    },
   },
   actions: {
-    async GET_INVOICES({commit, state}){
+    async GET_INVOICES({ commit, state }) {
       const getData = await getDocs(collection(db, "invoices"));
       getData.forEach((doc) => {
-        state.invoiceData.push({id: doc.id, ...doc.data() })
-      })
-    }
+        const data = { docId: doc.id, ...doc.data() };
+        commit("SET_INVOICE_DATA", data);
+      });
+      commit("INVOICES_LOADED");
+    },
   },
-  modules: {
-  }
-})
+  modules: {},
+});
