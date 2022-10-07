@@ -46,6 +46,10 @@ export default {
   background-color: #1e2139;
   align-items: center;
 
+  &:hover {
+    background-color: #252945;
+  }
+
   span {
     font-size: 13px;
   }
