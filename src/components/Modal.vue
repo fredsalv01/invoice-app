@@ -10,45 +10,51 @@
   </div>
 </template>
 <script>
-import { mapMutations } from 'vuex';
+import { mapMutations, mapState } from "vuex";
 export default {
-  name: 'modal',
+  name: "modal",
   methods: {
-    ...mapMutations(['TOGGLE_MODAL', 'TOGGLE_INVOICE']),
+    ...mapMutations(["TOGGLE_MODAL", "TOGGLE_INVOICE", "TOGGLE_EDIT_INVOICE"]),
     closeModal() {
       this.TOGGLE_MODAL();
     },
     closeInvoice() {
       this.TOGGLE_MODAL();
       this.TOGGLE_INVOICE();
-    }
+      if(this.editInvoice){
+        this.TOGGLE_EDIT_INVOICE();
+      }
+    },
   },
-}
+  computed: {
+    ...mapState(["editInvoice"]),
+  },
+};
 </script>
 <style lang="scss" scoped>
-  .modal {
-    z-index: 100;
-    position: fixed;
-    justify-content: center;
-    background-color: rgba(0,0,0, 0.5);
-    align-items: center;
-    height: 100vh;
-    width: 100%;
-    .modal-content {
-      border-radius: 20px;
-      padding: 48px 32px;
-      max-width: 450px;
-      background-color: #252945;
-      color: #fff;
-      p {
-        text-align: center;
-      }
-      .actions {
-        margin-top: 24px;
-        button {
-          flex: 1;
-        }
+.modal {
+  z-index: 100;
+  position: fixed;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  .modal-content {
+    border-radius: 20px;
+    padding: 48px 32px;
+    max-width: 450px;
+    background-color: #252945;
+    color: #fff;
+    p {
+      text-align: center;
+    }
+    .actions {
+      margin-top: 24px;
+      button {
+        flex: 1;
       }
     }
   }
+}
 </style>
