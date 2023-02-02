@@ -1,5 +1,11 @@
 # invoice-app-new
 
+I have used for this project tailwind css color palette to make the design in a pure css file.
+To see the deployed website visit: 
+```sh
+https://github.com/fredsalv01/invoice-app
+```
+
 ## Project setup
 ```
 yarn install
